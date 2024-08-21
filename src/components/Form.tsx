@@ -1,4 +1,3 @@
-//useReducer es una forma de almacenar tu state
 
 import { useState,ChangeEvent,FormEvent } from "react"
 import { Activity } from "../types"
