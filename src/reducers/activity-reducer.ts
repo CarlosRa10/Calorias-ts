@@ -9,6 +9,8 @@
 //state - es el valor del estado cuya lógica se maneja dentro del Reducer
 //initialState - es el estado inicial con el que es creado el reducer, este initialState es similar a los valores de inicio de useState
 //Actions - las acciones son las funciones que manejan toda la lógica para modificar tu state
+//las acciones nos va a ayudar a describir que es lo que esta pasando y que información es la que va a modificar y que parte de nuestro state 
+//una accion consta de dos partes - el type que es la descripción y el payload que es la informacion que modifica o que vamos a agregar a nuestro state 
 //Payload - es la informacion que modifica tu state
 //Dispatch es la funcion que manda llamar la accion con el payload
 import { Activity } from "../types"
@@ -16,9 +18,9 @@ import { Activity } from "../types"
 
 
 //type- va a describir lo que va a pasar en el reducer
-export type ActivityActions = {
-
-}
+//2)las acciones son 'save-activity' que toma un payload o informacion y un payload toma basicamente el parametro que le estarias pasando al reducer
+export type ActivityActions = 
+    { type:'save-activity', payload:{newActivity : Activity} }//El type describe que es lo que esta suecediendo - el payload son los datos que se van agregar a tu state
 
 //El state de nuestro reducer se va a llamar activities y va hacer de tipo de Activity como arreglo[]
 type ActivityState = {
@@ -29,10 +31,15 @@ type ActivityState = {
 export const initialState : ActivityState = {
     activities : []
 }
-//nuestro Reducer -el reducer conecta las acciones y los states
+//1)nuestro Reducer -el reducer conecta las acciones y los states
 export const ActivityReducer = (
         state:ActivityState = initialState,
         action:ActivityActions
     ) => {
-
+    
+        if(action.type === 'save-activity'){
+            //Este código maneja la lógica para actualizar el state
+            console.log('desde el type de save-activity')
+        }
+        return state
 }
