@@ -3,13 +3,14 @@
 import { useReducer } from "react"
 import Form from "./components/Form"
 import { ActivityReducer, initialState } from "./reducers/activity-reducer"
+import ActivityList from "./components/ActivityList"
 
 
 function App() {
   //useReducer toma dos parametros, toma el reducer y el state inicial - el arreglo[] nos va a retornar el estado de ese reducer-dispatch es una funcion especial que te permite las acciones
   //3)Para poder utilizar el reducer de activityReducer tenemos que importar el hook de useReducer y en que reducer quieres utilizarlo que puedes crear multiples reducer
   const [state, dispatch] = useReducer(ActivityReducer,initialState)//dispatch (la función para enviar acciones al reductor).
-
+  
   return (
     <>
         <header 
@@ -27,6 +28,12 @@ function App() {
                 dispatch={dispatch}
               />
           </div>
+        </section>
+
+        <section className="p-10 mx-auto max-w-4xl">
+          <ActivityList
+            activities={state.activities}          
+          />
         </section>
     </>
   )
