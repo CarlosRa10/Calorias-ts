@@ -1,12 +1,13 @@
 
-import { useState,ChangeEvent,FormEvent, Dispatch } from "react"
+import { useState,ChangeEvent,FormEvent, Dispatch, useEffect } from "react"
 import { v4 as uuidv4 } from 'uuid'
 import { Activity } from "../types"
 import { categories } from "../data/categories"
-import { ActivityActions } from "../reducers/activity-reducer"
+import { ActivityActions, ActivityState } from "../reducers/activity-reducer"
 
 type FormProps = {
-    dispatch: Dispatch<ActivityActions>
+    dispatch: Dispatch<ActivityActions>,
+    state:ActivityState
   }
   
 const initialState : Activity = {
@@ -16,15 +17,29 @@ const initialState : Activity = {
     calories:0
 }
 
-export default function Form({dispatch}:FormProps) {
+export default function Form({dispatch, state}:FormProps) {
     //definiendo nuestro state y conectarlo a los diferentes inputs
     //setActivity es un objeto
+    //Se define un estado local llamado activity y 
+    //se inicializa con el valor de initialState utilizando el hook useState. El tipo de activity es Activity.
     const [activity,setActivity]=useState<Activity>(initialState)
+    useEffect(()=>{
+    
+    if(state.activeId){//Aquí se comprueba si state.activeId tiene un valor asignado. Si es así, se procede con el siguiente paso.
+//Se filtra el array state.activities para encontrar el elemento cuyo id coincide con state.activeId.
+//El resultado de este filtrado es un array, del cual se toma el primer elemento (índice 0) y se asigna a la variable selectedActivity.
+        const selectedActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeId )[0]
+        setActivity(selectedActivity)
+    }
+    },[state.activeId])    //El useEffect se ejecuta cada vez que el valor de state.activeId cambia.
+    //El código dentro del useEffect se ejecutará cuando se cumpla esta condición.
     
 //actualizar el value de el input
     const handleChange = (e:ChangeEvent<HTMLSelectElement>|ChangeEvent<HTMLInputElement>) =>{//si no le especificamos el tipo de dato da eny
+//Se crea una variable booleana isNumberField que determina si el campo del formulario que se está actualizando es de tipo "category" o "calories".
+//Esto se hace comprobando si el id del elemento del formulario que generó el evento (e.target.id) se encuentra en el array ['category','calories'].
         const isNumberField = ['category','calories'].includes(e.target.id)//include es un array metodo-- si estoy escribiendo en categoria o en caloria me arroja un true, si no un false
-        //console.log(isNumberField)
+        //console.log(isNumberField)//si se manupula 'category','calories' es true
 
         setActivity({
             ...activity,
@@ -33,6 +48,7 @@ export default function Form({dispatch}:FormProps) {
     }
 
     const isValidActivity =()=>{
+        //Aquí se utiliza la desestructuración de objetos de JavaScript para extraer las propiedades name y calories del objeto activity.
         const {name,calories} = activity
         return name.trim() !== '' && calories > 0//El método trim( ) elimina los espacios en blanco en ambos extremos del string.
     }
@@ -43,6 +59,7 @@ export default function Form({dispatch}:FormProps) {
 
         setActivity({
             ...initialState,
+//Además, se agrega una nueva propiedad id y se le asigna un valor generado por la función uuidv4().
             id:uuidv4()
         })
     }

@@ -7,6 +7,10 @@ import ActivityList from "./components/ActivityList"
 
 
 function App() {
+  //ActivityReducer es una función que toma el estado actual y una acción, y devuelve un nuevo estado.
+  //initialState es el estado inicial de la aplicación.
+  //state es el estado actual de la aplicación.
+  //dispatch es una función que se utiliza para enviar acciones al reducer.
   //useReducer toma dos parametros, toma el reducer y el state inicial - el arreglo[] nos va a retornar el estado de ese reducer-dispatch es una funcion especial que te permite las acciones
   //3)Para poder utilizar el reducer de activityReducer tenemos que importar el hook de useReducer y en que reducer quieres utilizarlo que puedes crear multiples reducer
   const [state, dispatch] = useReducer(ActivityReducer,initialState)//dispatch (la función para enviar acciones al reductor).
@@ -26,13 +30,15 @@ function App() {
           <div className="max-w-4xl mx-auto">
               <Form 
                 dispatch={dispatch}
+                state={state}
               />
           </div>
         </section>
 
         <section className="p-10 mx-auto max-w-4xl">
           <ActivityList
-            activities={state.activities}          
+            activities={state.activities}
+            dispatch = {dispatch}          
           />
         </section>
     </>

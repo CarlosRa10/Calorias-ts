@@ -20,16 +20,21 @@ import { Activity } from "../types"
 //type- va a describir lo que va a pasar en el reducer
 //2)las acciones son 'save-activity' que toma un payload o informacion y un payload toma basicamente el parametro que le estarias pasando al reducer
 export type ActivityActions = 
-    { type:'save-activity', payload:{newActivity : Activity} }//El type describe que es lo que esta suecediendo - el payload son los datos que se van agregar a tu state
-
+    { type:'save-activity', payload:{newActivity : Activity} }|//El type describe que es lo que esta suecediendo - el payload son los datos que se van agregar a tu state
+    { type:'set-activeId', payload:{ id : Activity['id']} } |
+    { type:'delete-activity', payload:{ id : Activity['id']} } 
 //El state de nuestro reducer se va a llamar activities y va hacer de tipo de Activity como arreglo[]
-type ActivityState = {
-    activities : Activity[]
+export type ActivityState = {
+    activities : Activity[],
+    activeId:Activity['id']//un lookup-buscador
+
 }
 
 //state inicial - nuestro inicial state es un objeto y tambien hay que asignarle un type- vamos a gregarle un arreglo 
 export const initialState : ActivityState = {
-    activities : []
+//Este campo del objeto initialState es un arreglo vacío llamado activities.
+    activities : [],//Este arreglo probablemente contendrá la lista de actividades que el usuario ha registrado.
+    activeId:''//Este campo probablemente se utilizará para rastrear la actividad actualmente seleccionada o en focus por el usuario.
 }
 //1)nuestro Reducer -el reducer conecta las acciones y los states
 export const ActivityReducer = (
@@ -39,10 +44,31 @@ export const ActivityReducer = (
     
         if(action.type === 'save-activity'){
             //Este código maneja la lógica para actualizar el state
-            
+            let updatedActivities : Activity[] = []
+            if(state.activeId){
+                updatedActivities = state.activities.map(activity => activity.id === state.activeId ? action.payload.newActivity:activity)
+            }else{
+                updatedActivities = [...state.activities, action.payload.newActivity]//agregarcopia
+            }
             return {
                 ...state,//Tomom una copia
-                activities : [...state.activities, action.payload.newActivity]//agregarcopia
+                activities : updatedActivities,
+                activeId:''
+            }
+        }
+
+        if(action.type === 'set-activeId'){
+            //lo que llegue del payload es lo que define ese state
+            return{
+                ...state,
+                activeId: action.payload.id
+            }
+        }
+
+        if(action.type === 'delete-activity'){
+            return {
+                ...state,
+                activities: state.activities.filter( activity => activity.id !== action.payload.id)
             }
         }
         return state
