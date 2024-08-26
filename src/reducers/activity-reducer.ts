@@ -22,7 +22,8 @@ import { Activity } from "../types"
 export type ActivityActions = 
     { type:'save-activity', payload:{newActivity : Activity} }|//El type describe que es lo que esta suecediendo - el payload son los datos que se van agregar a tu state
     { type:'set-activeId', payload:{ id : Activity['id']} } |
-    { type:'delete-activity', payload:{ id : Activity['id']} } 
+    { type:'delete-activity', payload:{ id : Activity['id']} } |
+    { type:'restart-app' } 
 //El state de nuestro reducer se va a llamar activities y va hacer de tipo de Activity como arreglo[]
 export type ActivityState = {
     activities : Activity[],
@@ -30,10 +31,17 @@ export type ActivityState = {
 
 }
 
+
+const localStorageActivities =():Activity[]=>{
+    const activities = localStorage.getItem('activities')
+    return activities ? JSON.parse(activities):[]
+} 
+
+
 //state inicial - nuestro inicial state es un objeto y tambien hay que asignarle un type- vamos a gregarle un arreglo 
 export const initialState : ActivityState = {
 //Este campo del objeto initialState es un arreglo vacío llamado activities.
-    activities : [],//Este arreglo probablemente contendrá la lista de actividades que el usuario ha registrado.
+    activities : localStorageActivities(),//Este arreglo probablemente contendrá la lista de actividades que el usuario ha registrado.
     activeId:''//Este campo probablemente se utilizará para rastrear la actividad actualmente seleccionada o en focus por el usuario.
 }
 //1)nuestro Reducer -el reducer conecta las acciones y los states
@@ -69,6 +77,13 @@ export const ActivityReducer = (
             return {
                 ...state,
                 activities: state.activities.filter( activity => activity.id !== action.payload.id)
+            }
+        }
+
+        if(action.type === 'restart-app'){
+            return{
+                activities:[],
+                activeId:''
             }
         }
         return state
